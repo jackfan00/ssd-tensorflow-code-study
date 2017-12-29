@@ -391,6 +391,8 @@ def ssd_anchors_all_layers(img_shape,
     """
     layers_anchors = []
     for i, s in enumerate(layers_shape):
+        # anchor_bboxes = (y, x, h, w)
+        # y,x shape = (38,38,1),  h,w shape=(4,)
         anchor_bboxes = ssd_anchor_one_layer(img_shape, s,
                                              anchor_sizes[i],
                                              anchor_ratios[i],
@@ -438,7 +440,11 @@ def ssd_multibox_layer(inputs,
     num_loc_pred = num_anchors * 4
     loc_pred = slim.conv2d(net, num_loc_pred, [3, 3], activation_fn=None,
                            scope='conv_loc')
+    # move channel to last index
+    # loc_pred shape = (batchsize, hight, width, channels)
     loc_pred = custom_layers.channel_to_last(loc_pred)
+    # reshape loc_pred = (batchsize, hight, width, num_anchors, 4)
+    # tensor_shape(loc_pred, 4)[:-1] = [batchsize, hight, width]
     loc_pred = tf.reshape(loc_pred,
                           tensor_shape(loc_pred, 4)[:-1]+[num_anchors, 4])
     # Class prediction.
