@@ -109,6 +109,7 @@ def tf_ssd_bboxes_encode_layer(labels,
           - only update if beat the score of other bboxes.
         """
         # Jaccard score.
+        # 
         label = labels[i]
         bbox = bboxes[i]
         # jaccard shape=(38,38,4)
